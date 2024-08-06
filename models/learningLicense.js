@@ -6,7 +6,7 @@ const learningLicenseSchema = new mongoose.Schema({
     rto: { type: String, required: true },
     vehicleType: { type: String, required: true },
     fatherOrHusbandFullName: { type: String, required: true },
-    gender: { type: String, enum: ['male', 'female', 'other'], required: true },
+    gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true },
     dateOfBirth: { type: Date, required: true },
     qualification: { type: String, required: true },
     bloodGroup: { type: String, required: true },

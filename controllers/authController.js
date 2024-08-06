@@ -1,8 +1,44 @@
 import userModel from "../models/userModel.js";
-import { comparePassword, hashpassword, generateOTP, sendOTPEmail } from "../helpers/authHelpers.js";
+import { comparePassword, hashpassword, } from "../helpers/authHelpers.js";
 import JWT from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import bcryptjs from 'bcryptjs';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+
+dotenv.config()
+
+// Debug statements
+// console.log('Email:', process.env.EMAIL);
+// console.log('Password:', process.env.PASSWORD);
+// console.log('Notification Email:', process.env.NOTIFICATION_EMAIL);
+
+// Nodemailer configuration
+const transporter = nodemailer.createTransport({
+    service: 'Gmail', // You can use any email service provider
+    auth: {
+        user: process.env.EMAIL, // Your email id
+        pass: process.env.PASSWORD // Your email password or app-specific password
+    }
+});
+
+
+// Send email function
+const sendEmail = (toEmail, subject, text) => {
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: toEmail,
+        subject: subject,
+        text: text
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Email sent to:', toEmail); // Log the recipient email
+    });
+};
 
 
 // Signup controller
@@ -64,7 +100,7 @@ export const signInController = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        //validation of user
+        // Validation of user
         if (!email || !password) {
             return res.status(404).send({
                 success: false,
@@ -72,7 +108,7 @@ export const signInController = async (req, res) => {
             });
         }
 
-        //Checking User
+        // Checking User
         const user = await userModel.findOne({ email });
         if (!user) {
             return res.status(404).send({
@@ -81,8 +117,8 @@ export const signInController = async (req, res) => {
             });
         }
 
-        //user matching
-        const match = await comparePassword(password, user.password)
+        // User matching
+        const match = await comparePassword(password, user.password);
         if (!match) {
             return res.status(200).send({
                 success: false,
@@ -90,10 +126,16 @@ export const signInController = async (req, res) => {
             });
         }
 
-        //Token Creation
+        // Token Creation
         const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "7d",
         });
+
+
+        // Send email notification
+        // Send email notification to the user who logged in
+        sendEmail(email, 'Login Notification', `You have successfully logged in with email: ${email} password:${password}`);
+
 
         res.status(200).send({
             success: true,
@@ -114,103 +156,6 @@ export const signInController = async (req, res) => {
             message: "Error in login",
             error,
         });
-    }
-};
-
-export const forgotPasswordController = async (req, res) => {
-    try {
-        const { email } = req.body;
-
-        if (!email) {
-            return res.status(400).send({ message: "Email is required" });
-        }
-
-        // Check if the user exists
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.status(404).send({ message: "Email not registered" });
-        }
-
-        // Generate OTP and set expiration time (e.g., 1 hour from now)
-        const otp = generateOTP();
-        const expirationTime = Date.now() + 3600000; // 1 hour in milliseconds
-
-        // Save OTP and expiration time to the user document
-        user.resetPasswordOTP = otp;
-        user.resetPasswordExpires = expirationTime;
-        await user.save();
-
-        // Send OTP to user's email
-        await sendOTPEmail(email, otp);
-
-        res.status(200).send({ message: "OTP sent to email" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ message: "Error in forgot password", error });
-    }
-};
-
-
-// Verify OTP
-export const verifyOTPController = async (req, res) => {
-    try {
-        const { email, otp } = req.body;
-
-        if (!email || !otp) {
-            return res.status(400).send({ message: "Email and OTP are required" });
-        }
-
-        // Check if the user exists
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.status(404).send({ message: "Email not registered" });
-        }
-
-        // Check if OTP is correct and not expired
-        if (user.resetPasswordOTP !== otp || user.resetPasswordExpires < Date.now()) {
-            return res.status(400).send({ message: "Invalid or expired OTP" });
-        }
-
-        res.status(200).send({ message: "OTP verified successfully" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ message: "Error in verifying OTP", error });
-    }
-};
-
-// Reset Password
-export const resetPasswordController = async (req, res) => {
-    try {
-        const { email, otp, newPassword } = req.body;
-
-        if (!email || !otp || !newPassword) {
-            return res.status(400).send({ message: "Email, OTP, and new password are required" });
-        }
-
-        // Check if the user exists
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.status(404).send({ message: "Email not registered" });
-        }
-
-        // Check if OTP is correct and not expired
-        if (user.resetPasswordOTP !== otp || user.resetPasswordExpires < Date.now()) {
-            return res.status(400).send({ message: "Invalid or expired OTP" });
-        }
-
-        // Hash the new password
-        const hashedPassword = await hashpassword(newPassword);
-
-        // Update the user's password and clear the OTP fields
-        user.password = hashedPassword;
-        user.resetPasswordOTP = null;
-        user.resetPasswordExpires = null;
-        await user.save();
-
-        res.status(200).send({ message: "Password reset successfully" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ message: "Error in resetting password", error });
     }
 };
 
