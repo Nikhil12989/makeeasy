@@ -11,6 +11,9 @@ import stateFoodLicense from "./routes/stateFoodLicenseRoute.js"
 import centralFoodLicense from "./routes/centralFoodLicenseRoute.js"
 import foodManufacturingLicense from "./routes/foodManufacturingLicenseRoute.js"
 import imageCarousel from "./routes/imageCarouselRoute.js"
+import shopActLicense from "./routes/shopActLicense.js"
+import individualPancard from "./routes/individualPancardRoute.js"
+import companyPancard from "./routes/companyPancardRoute.js"
 import cookieParser from 'cookie-parser';
 
 dotenv.config()
@@ -53,3 +56,6 @@ app.use("/api/stateFoodLicense", stateFoodLicense)
 app.use('/api/centralFoodLicense', centralFoodLicense)
 app.use('/api/foodManufacturingLicense', foodManufacturingLicense)
 app.use('/api/imageCarousel', imageCarousel)
+app.use('/api/shopActLicense', shopActLicense)
+app.use('/api/individualPancard', individualPancard)
+app.use('/api/companyPancard', companyPancard)
