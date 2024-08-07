@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
 
-const comapanyPanardSchema = new mongoose.Schema({
+const comapanyPancardSchema = new mongoose.Schema({
     companyFullName: { type: String, required: true },
-    CompanyNameAsPerPancard: { type: String, required: true },
+    companyNameAsPerPancard: { type: String, required: true },
     gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true },
     dateOfBirth: { type: Date, required: true },
     companyAddress: { type: String, required: true },
@@ -34,4 +34,4 @@ const comapanyPanardSchema = new mongoose.Schema({
 
 }, { timestamps: true })
 
-export default mongoose.model("CompanyPancard", comapanyPanardSchema)
+export default mongoose.model("CompanyPancard", comapanyPancardSchema)
