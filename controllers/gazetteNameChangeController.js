@@ -1,4 +1,5 @@
 import GazetteNameChange from "../models/gazetteNameChange.js";
+import fs from "fs";
 
 // Create Gazette Name Change
 export const createGazetteNameChange = async (req, res) => {
@@ -18,27 +19,27 @@ export const createGazetteNameChange = async (req, res) => {
         } = req.fields;
 
         const aadharCard = req.files.aadharCard ? {
-            data: req.files.aadharCard.path,
+            data: fs.readFileSync(req.files.aadharCard.path),
             contentType: req.files.aadharCard.type
         } : undefined;
 
         const photo = req.files.photo ? {
-            data: req.files.photo.path,
+            data: fs.readFileSync(req.files.photo.path),
             contentType: req.files.photo.type
         } : undefined;
 
         const signature = req.files.signature ? {
-            data: req.files.signature.path,
+            data: fs.readFileSync(req.files.signature.path),
             contentType: req.files.signature.type
         } : undefined;
 
         const schoolLC = req.files.schoolLC ? {
-            data: req.files.schoolLC.path,
+            data: fs.readFileSync(req.files.schoolLC.path),
             contentType: req.files.schoolLC.type
         } : undefined;
 
         const nameChangeAffidavit = req.files.nameChangeAffidavit ? {
-            data: req.files.nameChangeAffidavit.path,
+            data: fs.readFileSync(req.files.nameChangeAffidavit.path),
             contentType: req.files.nameChangeAffidavit.type
         } : undefined;
 
@@ -67,7 +68,8 @@ export const createGazetteNameChange = async (req, res) => {
 
         res.status(201).json({ message: "Gazette Name Change created successfully", newGazetteNameChange });
     } catch (error) {
-        res.status(500).json({ message: "Error creating Gazette Name Change", error });
+        console.error("Error creating Gazette Name Change:", error);
+        res.status(500).json({ message: "Error creating Gazette Name Change", error: error.message });
     }
 };
 
@@ -75,22 +77,27 @@ export const createGazetteNameChange = async (req, res) => {
 export const getAllGazetteNameChanges = async (req, res) => {
     try {
         const gazetteNameChanges = await GazetteNameChange.find();
-        res.status(200).json(gazetteNameChanges);
+        res.status(200).json({ gazetteNameChanges });
     } catch (error) {
-        res.status(500).json({ message: "Error retrieving Gazette Name Changes", error });
+        console.error("Error retrieving Gazette Name Changes:", error);
+        res.status(500).json({ message: "Error retrieving Gazette Name Changes", error: error.message });
     }
 };
 
 // Get Gazette Name Change by ID
 export const getGazetteNameChangeById = async (req, res) => {
     try {
-        const gazetteNameChange = await GazetteNameChange.findById(req.params.id);
+        const { id } = req.params;
+        const gazetteNameChange = await GazetteNameChange.findById(id);
+
         if (!gazetteNameChange) {
             return res.status(404).json({ message: "Gazette Name Change not found" });
         }
-        res.status(200).json(gazetteNameChange);
+
+        res.status(200).json({ gazetteNameChange });
     } catch (error) {
-        res.status(500).json({ message: "Error retrieving Gazette Name Change", error });
+        console.error("Error retrieving Gazette Name Change:", error);
+        res.status(500).json({ message: "Error retrieving Gazette Name Change", error: error.message });
     }
 };
 
@@ -112,27 +119,27 @@ export const updateGazetteNameChange = async (req, res) => {
         } = req.fields;
 
         const aadharCard = req.files.aadharCard ? {
-            data: req.files.aadharCard.path,
+            data: fs.readFileSync(req.files.aadharCard.path),
             contentType: req.files.aadharCard.type
         } : undefined;
 
         const photo = req.files.photo ? {
-            data: req.files.photo.path,
+            data: fs.readFileSync(req.files.photo.path),
             contentType: req.files.photo.type
         } : undefined;
 
         const signature = req.files.signature ? {
-            data: req.files.signature.path,
+            data: fs.readFileSync(req.files.signature.path),
             contentType: req.files.signature.type
         } : undefined;
 
         const schoolLC = req.files.schoolLC ? {
-            data: req.files.schoolLC.path,
+            data: fs.readFileSync(req.files.schoolLC.path),
             contentType: req.files.schoolLC.type
         } : undefined;
 
         const nameChangeAffidavit = req.files.nameChangeAffidavit ? {
-            data: req.files.nameChangeAffidavit.path,
+            data: fs.readFileSync(req.files.nameChangeAffidavit.path),
             contentType: req.files.nameChangeAffidavit.type
         } : undefined;
 
@@ -167,19 +174,24 @@ export const updateGazetteNameChange = async (req, res) => {
 
         res.status(200).json({ message: "Gazette Name Change updated successfully", updatedGazetteNameChange });
     } catch (error) {
-        res.status(500).json({ message: "Error updating Gazette Name Change", error });
+        console.error("Error updating Gazette Name Change:", error);
+        res.status(500).json({ message: "Error updating Gazette Name Change", error: error.message });
     }
 };
 
 // Delete Gazette Name Change
 export const deleteGazetteNameChange = async (req, res) => {
     try {
-        const deletedGazetteNameChange = await GazetteNameChange.findByIdAndDelete(req.params.id);
+        const { id } = req.params;
+        const deletedGazetteNameChange = await GazetteNameChange.findByIdAndDelete(id);
+
         if (!deletedGazetteNameChange) {
             return res.status(404).json({ message: "Gazette Name Change not found" });
         }
+
         res.status(200).json({ message: "Gazette Name Change deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Error deleting Gazette Name Change", error });
+        console.error("Error deleting Gazette Name Change:", error);
+        res.status(500).json({ message: "Error deleting Gazette Name Change", error: error.message });
     }
 };

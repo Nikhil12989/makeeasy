@@ -1,8 +1,17 @@
 import ShopActLicense from "../models/shopActLicense.js";
+import fs from "fs";
 
 // Create Shop Act License
 export const createShopActLicense = async (req, res) => {
     try {
+        // Trim spaces from keys
+        const trimmedFields = {};
+        for (const key in req.fields) {
+            if (req.fields.hasOwnProperty(key)) {
+                trimmedFields[key.trim()] = req.fields[key];
+            }
+        }
+
         const {
             fullName,
             fullNameMarathi,
@@ -29,36 +38,37 @@ export const createShopActLicense = async (req, res) => {
             partnerFullEmail,
             partnerFullAddress,
             aadharNumber
-        } = req.fields;
+        } = trimmedFields;
 
-        const passportPhoto = req.files.passportPhoto ? {
-            data: req.files.passportPhoto.path,
-            contentType: req.files.passportPhoto.type
+        // Convert files to buffers if they exist
+        const passportPhoto = req.files['documents.passportPhoto'] ? {
+            data: fs.readFileSync(req.files['documents.passportPhoto'].path),
+            contentType: req.files['documents.passportPhoto'].type
         } : undefined;
 
-        const signature = req.files.signature ? {
-            data: req.files.signature.path,
-            contentType: req.files.signature.type
+        const signature = req.files['documents.signature'] ? {
+            data: fs.readFileSync(req.files['documents.signature'].path),
+            contentType: req.files['documents.signature'].type
         } : undefined;
 
-        const aadharProof = req.files.aadharProof ? {
-            data: req.files.aadharProof.path,
-            contentType: req.files.aadharProof.type
+        const aadharProof = req.files['documents.aadharProof'] ? {
+            data: fs.readFileSync(req.files['documents.aadharProof'].path),
+            contentType: req.files['documents.aadharProof'].type
         } : undefined;
 
-        const pancard = req.files.pancard ? {
-            data: req.files.pancard.path,
-            contentType: req.files.pancard.type
+        const pancard = req.files['documents.pancard'] ? {
+            data: fs.readFileSync(req.files['documents.pancard'].path),
+            contentType: req.files['documents.pancard'].type
         } : undefined;
 
-        const shopPhoto = req.files.shopPhoto ? {
-            data: req.files.shopPhoto.path,
-            contentType: req.files.shopPhoto.type
+        const shopPhoto = req.files['documents.shopPhoto'] ? {
+            data: fs.readFileSync(req.files['documents.shopPhoto'].path),
+            contentType: req.files['documents.shopPhoto'].type
         } : undefined;
 
-        const selfDeclaration = req.files.selfDeclaration ? {
-            data: req.files.selfDeclaration.path,
-            contentType: req.files.selfDeclaration.type
+        const selfDeclaration = req.files['documents.selfDeclaration'] ? {
+            data: fs.readFileSync(req.files['documents.selfDeclaration'].path),
+            contentType: req.files['documents.selfDeclaration'].type
         } : undefined;
 
         const newLicense = new ShopActLicense({
@@ -101,7 +111,8 @@ export const createShopActLicense = async (req, res) => {
 
         res.status(201).json({ message: "Shop Act License created successfully", newLicense });
     } catch (error) {
-        res.status(500).json({ message: "Error creating Shop Act License", error });
+        console.error("Error creating Shop Act License:", error);
+        res.status(500).json({ message: "Error creating Shop Act License", error: error.message });
     }
 };
 
@@ -109,28 +120,41 @@ export const createShopActLicense = async (req, res) => {
 export const getAllShopActLicenses = async (req, res) => {
     try {
         const licenses = await ShopActLicense.find();
-        res.status(200).json(licenses);
+        res.status(200).json({ licenses });
     } catch (error) {
-        res.status(500).json({ message: "Error retrieving Shop Act Licenses", error });
+        console.error("Error retrieving Shop Act Licenses:", error);
+        res.status(500).json({ message: "Error retrieving Shop Act Licenses", error: error.message });
     }
 };
 
 // Get Shop Act License by ID
 export const getShopActLicenseById = async (req, res) => {
     try {
-        const license = await ShopActLicense.findById(req.params.id);
+        const { id } = req.params;
+        const license = await ShopActLicense.findById(id);
+
         if (!license) {
             return res.status(404).json({ message: "Shop Act License not found" });
         }
-        res.status(200).json(license);
+
+        res.status(200).json({ license });
     } catch (error) {
-        res.status(500).json({ message: "Error retrieving Shop Act License", error });
+        console.error("Error retrieving Shop Act License:", error);
+        res.status(500).json({ message: "Error retrieving Shop Act License", error: error.message });
     }
 };
 
 // Update Shop Act License
 export const updateShopActLicense = async (req, res) => {
     try {
+        // Trim spaces from keys
+        const trimmedFields = {};
+        for (const key in req.fields) {
+            if (req.fields.hasOwnProperty(key)) {
+                trimmedFields[key.trim()] = req.fields[key];
+            }
+        }
+
         const {
             fullName,
             fullNameMarathi,
@@ -157,36 +181,37 @@ export const updateShopActLicense = async (req, res) => {
             partnerFullEmail,
             partnerFullAddress,
             aadharNumber
-        } = req.fields;
+        } = trimmedFields;
 
-        const passportPhoto = req.files.passportPhoto ? {
-            data: req.files.passportPhoto.path,
-            contentType: req.files.passportPhoto.type
+        // Convert files to buffers if they exist
+        const passportPhoto = req.files['documents.passportPhoto'] ? {
+            data: fs.readFileSync(req.files['documents.passportPhoto'].path),
+            contentType: req.files['documents.passportPhoto'].type
         } : undefined;
 
-        const signature = req.files.signature ? {
-            data: req.files.signature.path,
-            contentType: req.files.signature.type
+        const signature = req.files['documents.signature'] ? {
+            data: fs.readFileSync(req.files['documents.signature'].path),
+            contentType: req.files['documents.signature'].type
         } : undefined;
 
-        const aadharProof = req.files.aadharProof ? {
-            data: req.files.aadharProof.path,
-            contentType: req.files.aadharProof.type
+        const aadharProof = req.files['documents.aadharProof'] ? {
+            data: fs.readFileSync(req.files['documents.aadharProof'].path),
+            contentType: req.files['documents.aadharProof'].type
         } : undefined;
 
-        const pancard = req.files.pancard ? {
-            data: req.files.pancard.path,
-            contentType: req.files.pancard.type
+        const pancard = req.files['documents.pancard'] ? {
+            data: fs.readFileSync(req.files['documents.pancard'].path),
+            contentType: req.files['documents.pancard'].type
         } : undefined;
 
-        const shopPhoto = req.files.shopPhoto ? {
-            data: req.files.shopPhoto.path,
-            contentType: req.files.shopPhoto.type
+        const shopPhoto = req.files['documents.shopPhoto'] ? {
+            data: fs.readFileSync(req.files['documents.shopPhoto'].path),
+            contentType: req.files['documents.shopPhoto'].type
         } : undefined;
 
-        const selfDeclaration = req.files.selfDeclaration ? {
-            data: req.files.selfDeclaration.path,
-            contentType: req.files.selfDeclaration.type
+        const selfDeclaration = req.files['documents.selfDeclaration'] ? {
+            data: fs.readFileSync(req.files['documents.selfDeclaration'].path),
+            contentType: req.files['documents.selfDeclaration'].type
         } : undefined;
 
         const updatedLicense = await ShopActLicense.findByIdAndUpdate(
@@ -235,19 +260,24 @@ export const updateShopActLicense = async (req, res) => {
 
         res.status(200).json({ message: "Shop Act License updated successfully", updatedLicense });
     } catch (error) {
-        res.status(500).json({ message: "Error updating Shop Act License", error });
+        console.error("Error updating Shop Act License:", error);
+        res.status(500).json({ message: "Error updating Shop Act License", error: error.message });
     }
 };
 
 // Delete Shop Act License
 export const deleteShopActLicense = async (req, res) => {
     try {
-        const deletedLicense = await ShopActLicense.findByIdAndDelete(req.params.id);
+        const { id } = req.params;
+        const deletedLicense = await ShopActLicense.findByIdAndDelete(id);
+
         if (!deletedLicense) {
             return res.status(404).json({ message: "Shop Act License not found" });
         }
+
         res.status(200).json({ message: "Shop Act License deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Error deleting Shop Act License", error });
+        console.error("Error deleting Shop Act License:", error);
+        res.status(500).json({ message: "Error deleting Shop Act License", error: error.message });
     }
 };

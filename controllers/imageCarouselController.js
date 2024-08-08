@@ -1,10 +1,11 @@
 import ImageCarousel from "../models/imageCarousel.js";
+import fs from "fs";
 
 // Create Image Carousel
 export const createImageCarousel = async (req, res) => {
     try {
         const images = req.files.images.map(file => ({
-            data: file.path,
+            data: fs.readFileSync(file.path),
             contentType: file.type
         }));
 
@@ -13,7 +14,8 @@ export const createImageCarousel = async (req, res) => {
 
         res.status(201).json({ message: "Image Carousel created successfully", newCarousel });
     } catch (error) {
-        res.status(500).json({ message: "Error creating Image Carousel", error });
+        console.error("Error creating Image Carousel:", error);
+        res.status(500).json({ message: "Error creating Image Carousel", error: error.message });
     }
 };
 
@@ -21,22 +23,27 @@ export const createImageCarousel = async (req, res) => {
 export const getAllImageCarousels = async (req, res) => {
     try {
         const carousels = await ImageCarousel.find();
-        res.status(200).json(carousels);
+        res.status(200).json({ carousels });
     } catch (error) {
-        res.status(500).json({ message: "Error retrieving Image Carousels", error });
+        console.error("Error retrieving Image Carousels:", error);
+        res.status(500).json({ message: "Error retrieving Image Carousels", error: error.message });
     }
 };
 
 // Get Image Carousel by ID
 export const getImageCarouselById = async (req, res) => {
     try {
-        const carousel = await ImageCarousel.findById(req.params.id);
+        const { id } = req.params;
+        const carousel = await ImageCarousel.findById(id);
+
         if (!carousel) {
             return res.status(404).json({ message: "Image Carousel not found" });
         }
-        res.status(200).json(carousel);
+
+        res.status(200).json({ carousel });
     } catch (error) {
-        res.status(500).json({ message: "Error retrieving Image Carousel", error });
+        console.error("Error retrieving Image Carousel:", error);
+        res.status(500).json({ message: "Error retrieving Image Carousel", error: error.message });
     }
 };
 
@@ -44,7 +51,7 @@ export const getImageCarouselById = async (req, res) => {
 export const updateImageCarousel = async (req, res) => {
     try {
         const images = req.files.images.map(file => ({
-            data: file.path,
+            data: fs.readFileSync(file.path),
             contentType: file.type
         }));
 
@@ -60,20 +67,24 @@ export const updateImageCarousel = async (req, res) => {
 
         res.status(200).json({ message: "Image Carousel updated successfully", updatedCarousel });
     } catch (error) {
-        res.status(500).json({ message: "Error updating Image Carousel", error });
+        console.error("Error updating Image Carousel:", error);
+        res.status(500).json({ message: "Error updating Image Carousel", error: error.message });
     }
 };
 
 // Delete Image Carousel
 export const deleteImageCarousel = async (req, res) => {
     try {
-        const deletedCarousel = await ImageCarousel.findByIdAndDelete(req.params.id);
+        const { id } = req.params;
+        const deletedCarousel = await ImageCarousel.findByIdAndDelete(id);
+
         if (!deletedCarousel) {
             return res.status(404).json({ message: "Image Carousel not found" });
         }
 
-        res.status(200).json({ message: "Image Carousel deleted successfully", deletedCarousel });
+        res.status(200).json({ message: "Image Carousel deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Error deleting Image Carousel", error });
+        console.error("Error deleting Image Carousel:", error);
+        res.status(500).json({ message: "Error deleting Image Carousel", error: error.message });
     }
 };
