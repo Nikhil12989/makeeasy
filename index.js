@@ -14,6 +14,13 @@ import imageCarousel from "./routes/imageCarouselRoute.js"
 import shopActLicense from "./routes/shopActLicense.js"
 import individualPancard from "./routes/individualPancardRoute.js"
 import companyPancard from "./routes/companyPancardRoute.js"
+import nameChangeGazette from "./routes/gazetteNameChangeRoute.js"
+import religionChangeGazette from "./routes/gazetteReligionChangeRoute.js"
+import DOBChangeGazette from "./routes/gazetteDObChangeRoute.js"
+import freshPassport from "./routes/freshPassportRoute.js"
+import reIssuePassport from "./routes/reIssuePassportRoute.js"
+import itrFiling from "./routes/itrFilingRoute.js"
+import gstRegistration from "./routes/gstRegistration.js"
 import cookieParser from 'cookie-parser';
 
 dotenv.config()
@@ -59,3 +66,10 @@ app.use('/api/imageCarousel', imageCarousel)
 app.use('/api/shopActLicense', shopActLicense)
 app.use('/api/individualPancard', individualPancard)
 app.use('/api/companyPancard', companyPancard)
+app.use('/api/nameChangeGazette', nameChangeGazette)
+app.use('/api/gazetteReligionChange', religionChangeGazette)
+app.use('/api/gazetteDOBChange', DOBChangeGazette)
+app.use('/api/freshPassport', freshPassport)
+app.use('/api/reIssuePassport', reIssuePassport)
+app.use('/api/itrFiling', itrFiling)
+app.use('/api/gstRegistration', gstRegistration)

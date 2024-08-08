@@ -21,7 +21,6 @@ const learningLicenseSchema = new mongoose.Schema({
         addressProof: {
             data: Buffer,
             contentType: String,
-
         },
         passportPhoto: {
             data: Buffer,

@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-// Define the schema
-const gazetteNameChangeSchema = new mongoose.Schema({
+const gazetteDOBChange = new mongoose.Schema({
     type: { type: String },
     casteType: { type: String, required: true },
     reasonForChange: { type: String, required: true },
@@ -11,8 +10,8 @@ const gazetteNameChangeSchema = new mongoose.Schema({
     address: { type: String, required: true },
     gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true },
     dateOfBirth: { type: Date, required: true },
-    oldName: { type: String, required: true },
-    newName: { type: String, required: true },
+    oldDOB: { type: String, required: true },
+    newDOB: { type: String, required: true },
     documents: {
         aadharCard: {
             data: Buffer,
@@ -30,14 +29,14 @@ const gazetteNameChangeSchema = new mongoose.Schema({
             data: Buffer,
             contentType: String,
         },
-        nameChangeAffidavit: {
+        DOBChangeAffidavit: {
             data: Buffer,
             contentType: String,
         }
+
     }
-}, { timestamps: true });
 
-// Create the model
-const GazetteNameChange = mongoose.model('GazetteNameChange', gazetteNameChangeSchema);
 
-export default GazetteNameChange;
+}, { timestamps: true })
+
+export default mongoose.model('gazetteDOBChange', gazetteDOBChange)
