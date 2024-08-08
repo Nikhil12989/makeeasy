@@ -21,6 +21,7 @@ import freshPassport from "./routes/freshPassportRoute.js"
 import reIssuePassport from "./routes/reIssuePassportRoute.js"
 import itrFiling from "./routes/itrFilingRoute.js"
 import gstRegistration from "./routes/gstRegistration.js"
+import incomeCertificate from "./routes/incomeCertificateRoute.js"
 import cookieParser from 'cookie-parser';
 
 dotenv.config()
@@ -73,3 +74,4 @@ app.use('/api/freshPassport', freshPassport)
 app.use('/api/reIssuePassport', reIssuePassport)
 app.use('/api/itrFiling', itrFiling)
 app.use('/api/gstRegistration', gstRegistration)
+app.use('/api/incomeCertificate', incomeCertificate)
